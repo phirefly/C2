@@ -9,7 +9,7 @@ feature 'Approver edits NCR work order' do
   let(:ncr_proposal) { work_order.proposal }
 
   scenario 'keeps track of the modification' do
-    work_order.setup_approvals_and_observers('approver@example.com')
+    work_order.setup_approvals_and_observers
     approver = ncr_proposal.approvers.last
     login_as(approver)
 

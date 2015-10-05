@@ -10,7 +10,7 @@ feature 'Requester edits their NCR work order' do
   let!(:approver) { create(:user) }
 
   before do
-    work_order.setup_approvals_and_observers('approver@example.com')
+    work_order.setup_approvals_and_observers
     login_as(work_order.requester)
   end
 
