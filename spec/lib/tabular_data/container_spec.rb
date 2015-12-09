@@ -1,46 +1,60 @@
 describe TabularData::Container do
-  describe '#initialize' do
-    it 'sets the columns' do
-      config = {engine: 'Proposal',
-                column_configs: {a: true, b: true, c: true},
-                columns: ['a', 'b', 'c']}
+  describe "#initialize" do
+    it "sets the columns" do
+      config = {
+        class: "Proposal",
+        column_configs: {a: true, b: true, c: true},
+        columns: ["a", "b", "c"]
+      }
       container = TabularData::Container.new(:a_name, config)
       expect(container.columns.length).to eq(3)
-      expect(container.columns.map(&:name)).to eq(['a', 'b', 'c'])
+      expect(container.columns.map(&:name)).to eq(["a", "b", "c"])
     end
 
-    it 'does not modify the query if there are no joins' do
-      container = TabularData::Container.new(:a_name, engine: 'Proposal')
-      expect(container.rows.to_sql).to eq(Proposal.all().to_sql)
+    it "does not modify the query if there are no joins" do
+      container = TabularData::Container.new(:a_name, class: "Proposal")
+
+      expect(container.rows.to_sql).to eq(Proposal.all.to_sql)
     end
 
-    it 'aliases direct joins' do
-      container = TabularData::Container.new(:a_name, engine: 'Proposal', joins: {requester: true})
+    it "aliases direct joins" do
+      container = TabularData::Container.new(
+        :a_name,
+        class: "Proposal",
+        joins: {requester: true}
+      )
+
       expect(container.rows.to_sql).to include('ON "requester"."id" = "proposals"."requester_id"')
-      container.rows.count  # smoke test
     end
 
-    it 'aliases indirect joins' do
-      container = TabularData::Container.new(:a_name, engine: 'ApiToken', joins: {step: true, user: true})
+    it "aliases indirect joins" do
+      container = TabularData::Container.new(
+        :a_name,
+        class: "ApiToken",
+        joins: { step: true, user: true }
+      )
+
       expect(container.rows.to_sql).to include('ON "user"."id" = "steps"."user_id"')
-
-      container.rows.count  # smoke test
     end
 
-    it 'sets sort' do
-      config = {engine: 'Proposal',
-                column_configs: {a: true, b: true},
-                columns: ['a', 'b'],
-                sort: '-a'}
+    it "sets sort" do
+      config = {
+        class: "Proposal",
+        column_configs: { a: true, b: true },
+        columns: ["a", "b"],
+        sort: "-a"
+      }
+
       container = TabularData::Container.new(:a_name, config)
-      expect(container.rows.to_sql).to include('ORDER BY (proposals.a) DESC')
+
+      expect(container.rows.to_sql).to include("ORDER BY (proposals.a) DESC")
       expect(container.frozen_sort).to be(false)
       expect(container.columns[0].sort_dir).to be(:desc)
       expect(container.columns[1].sort_dir).to be_nil
     end
 
     it 'allows the sort to be frozen' do
-      config = {engine: 'Proposal',
+      config = {class: 'Proposal',
                 column_configs: {a: true, b: true},
                 columns: ['a', 'b'],
                 sort: '-a',
@@ -57,7 +71,7 @@ describe TabularData::Container do
     it 'allows the query to be modified' do
       pending = create(:proposal)
       approved = create(:proposal, status: 'approved')
-      container = TabularData::Container.new(:name, engine: 'Proposal')
+      container = TabularData::Container.new(:name, class: 'Proposal')
 
       expect(container.rows).to include(pending)
       expect(container.rows).to include(approved)
@@ -71,7 +85,7 @@ describe TabularData::Container do
 
   describe '#set_state_from_params' do
     let(:container) {
-      config = {engine: 'Proposal',
+      config = {class: 'Proposal',
                 column_configs: {id: true, client: {virtual: true}},
                 columns: ['id', 'client']}
       TabularData::Container.new(:abc, config)
