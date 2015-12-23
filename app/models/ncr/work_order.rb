@@ -107,18 +107,6 @@ module Ncr
       approvers.first
     end
 
-    def current_approver
-      if pending?
-        currently_awaiting_approvers.first
-      elsif approving_official
-        approving_official
-      elsif emergency and approvers.empty?
-        nil
-      else
-        User.for_email(system_approver_emails.first)
-      end
-    end
-
     def final_approver
       if !emergency and approvers.any?
         approvers.last

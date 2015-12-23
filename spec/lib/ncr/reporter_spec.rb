@@ -54,7 +54,7 @@ describe Ncr::Reporter do
       expect(proposal.approved?).to be_truthy
       expect(work_order.final_approver).to eq(work_order.approvers.last)
       csv = Ncr::Reporter.as_csv([proposal])
-      expect(csv).to include(",#{work_order.decorate.final_approver_email_address}")
+      expect(csv).to include(",#{work_order.decorate.current_approver_email_address}")
     end
   end
 
