@@ -43,9 +43,9 @@ class NcrDispatcher < LinearDispatcher
         next # no email for modifier
       end
       if approval.api_token # Approver's been notified through some other means
-        Mailer.actions_for_approver(approval, "updated").deliver_later
+        StepUserMailer.actions_for_step_user(approval, "updated").deliver_later
       else
-        Mailer.actions_for_approver(approval).deliver_later
+        StepUserMailer.actions_for_step_user(approval).deliver_later
       end
     end
   end

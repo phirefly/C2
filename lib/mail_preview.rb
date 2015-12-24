@@ -1,6 +1,6 @@
 class MailPreview < MailView
-  def actions_for_approver
-    mail = Mailer.actions_for_approver(pending_approval)
+  def actions_for_step_user
+    mail = StepUserMailer.actions_for_step_user(pending_approval)
     inline_styles(mail)
   end
 

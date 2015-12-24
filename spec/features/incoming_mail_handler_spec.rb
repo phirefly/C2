@@ -1,7 +1,7 @@
 describe "Handles incoming email" do
   let(:proposal) { create(:proposal, :with_serial_approvers) }
   let(:approval) { proposal.individual_steps.first }
-  let(:mail) { Mailer.actions_for_approver(approval) }
+  let(:mail) { StepUserMailer.actions_for_step_user(approval) }
   let(:mandrill_inbound_noapp) { File.read(RSpec.configuration.fixture_path + '/mandrill_inbound_noapp.json') }
 
   with_env_vars(NOTIFICATION_FALLBACK_EMAIL: 'nowhere@some.gov', NOTIFICATION_FROM_EMAIL: 'noreply@some.gov') do
@@ -22,7 +22,7 @@ describe "Handles incoming email" do
     expect(deliveries.length).to eq(0)
     my_approval = approval
     handler = IncomingMail::Handler.new
-    mail = Mailer.actions_for_approver(my_approval)
+    mail = StepUserMailer.actions_for_step_user(my_approval)
     mandrill_event = mandrill_payload_from_message(mail)
     mandrill_event[0]['msg']['from_email'] = 'not-a-real-user@example.com'
     mandrill_event[0]['msg']['headers']['Sender'] = 'still-not-a-real-user@example.com'
@@ -42,7 +42,7 @@ describe "Handles incoming email" do
 
   it "falls back to Sender if From is not valid" do
     my_approval = approval
-    mail = Mailer.actions_for_approver(my_approval)
+    mail = StepUserMailer.actions_for_step_user(my_approval)
     mandrill_event = mandrill_payload_from_message(mail)
     mandrill_event[0]['msg']['from_email'] = 'not-a-valid-user@example.com'
     mandrill_event[0]['msg']['headers']['Sender'] = my_approval.user.email_address
@@ -55,7 +55,7 @@ describe "Handles incoming email" do
 
   it "should create comment and observation for approver" do
     my_approval = approval
-    mail = Mailer.actions_for_approver(my_approval)
+    mail = StepUserMailer.actions_for_step_user(my_approval)
     mandrill_event = mandrill_payload_from_message(mail)
     mandrill_event[0]['msg']['from_email'] = my_approval.user.email_address
     handler = IncomingMail::Handler.new
