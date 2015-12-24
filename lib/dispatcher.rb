@@ -1,8 +1,8 @@
 class Dispatcher
   include ClassMethodsMixin
 
-  def email_approver(approval)
-    send_notification_email(approval)
+  def email_approver(step)
+    StepUserMailer.actions_for_step_user(step).deliver_later
   end
 
   def email_observers(proposal)
@@ -88,10 +88,6 @@ class Dispatcher
 
   def requires_approval_notice?(_approval)
     true
-  end
-
-  def send_notification_email(approval)
-    Mailer.actions_for_approver(approval).deliver_later
   end
 
   def user_is_not_approver?(approval)

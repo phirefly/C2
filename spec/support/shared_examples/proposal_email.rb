@@ -4,11 +4,11 @@ shared_examples "a proposal email" do
   end
 
   it "uses the configured sender email" do
-    expect(mail.from).to eq(['reply@example.com'])
+    expect(mail.from).to eq(["noreply@example.com"])
   end
 
   it "uses the configured replyto email" do
-    expect(mail.reply_to).to eq(["replyto+#{proposal.public_id}@example.com"])
+    expect(mail.reply_to).to eq(["noreplyto+#{proposal.public_id}@example.com"])
   end
 
   it "includes the appropriate headers for threading" do

@@ -1,15 +1,6 @@
 describe CommentMailer do
   include MailerSpecHelper
 
-  around(:each) do |example|
-    with_env_vars(
-      "NOTIFICATION_FROM_EMAIL" => "reply@example.com",
-      "NOTIFICATION_REPLY_TO" => "replyto@example.com"
-    ) do
-      example.run
-    end
-  end
-
   describe "#comment_added_email" do
     it_behaves_like "a proposal email" do
       let(:proposal) { create(:proposal) }
